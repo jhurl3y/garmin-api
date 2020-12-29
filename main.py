@@ -5,7 +5,7 @@ from apis.garmin import GarminApi
 from datetime import date, timedelta
 from dotenv import load_dotenv
 from typing import List
-from models import (Root, Name, Step, Stats, HeartRate)
+from models import (Root, Name, Step, Stats, HeartRate, Activity)
 
 # Load email and password
 load_dotenv()
@@ -124,3 +124,16 @@ async def heart_rate():
     dynamo.update_heart_rate(yesterday, data)
 
     return data
+
+
+@app.get('/last_activity', response_model=Activity)
+async def last_activity():
+    data = garmin.get_activities(limit=1)
+
+    if not data:
+        raise HTTPException(status_code=400, detail='Error logging in')
+
+    if 'error' in data:
+        raise HTTPException(status_code=500, detail=data.get('message'))
+
+    return data[0]

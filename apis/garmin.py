@@ -76,6 +76,22 @@ class GarminApi:
                 'msg': f'GarminConnect error: {e.status}'
             }
 
+    def get_activities(self, limit):
+        if not self.client:
+            self.client = self._get_client()
+
+        try:
+            return self.client.get_activities(0, limit)  # 0=start, 1=limit
+        except (
+            GarminConnectConnectionError,
+            GarminConnectAuthenticationError,
+            GarminConnectTooManyRequestsError
+        ) as e:
+            return {
+                'error': True,
+                'msg': f'GarminConnect error: {e.status}'
+            }
+
     def _get_client(self):
         try:
             client = Garmin(self.email, self.password)
