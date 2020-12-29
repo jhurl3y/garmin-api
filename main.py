@@ -1,6 +1,7 @@
 import os
 from fastapi import FastAPI, HTTPException
-from GarminApi import GarminApi
+from apis.dynamo import DynamoApi
+from apis.garmin import GarminApi
 from datetime import date, timedelta
 from dotenv import load_dotenv
 from typing import List
@@ -11,36 +12,55 @@ load_dotenv()
 EMAIL = os.getenv("EMAIL")
 PASSWORD = os.getenv("PASSWORD")
 
+
 app = FastAPI()
-api = GarminApi(email=EMAIL, password=PASSWORD)
+dynamo = DynamoApi()
+garmin = GarminApi(email=EMAIL, password=PASSWORD)
 
 
 @app.get('/', response_model=Root)
 async def root():
     return {'message': 'Hello James'}
 
+
 @app.get('/name', response_model=Name)
 async def name():
-    if not api:
+    data = dynamo.get_name()
+
+    # Successfully loaded from db
+    if data:
+        return {'name': data}
+
+    if not garmin:
         raise HTTPException(status_code=400, detail='Error logging in')
 
-    data = api.get_name()
+    data = garmin.get_name()
 
     if not data:
         raise HTTPException(status_code=400, detail='Error logging in')
 
     if 'error' in data:
         raise HTTPException(status_code=500, detail=data.get('message'))
+
+    # Update in db
+    dynamo.update_name(data)
 
     return {'name': data}
 
+
 @app.get('/steps', response_model=List[Step])
 async def steps():
-    if not api:
+    yesterday = (date.today() - timedelta(1)).isoformat()
+    data = dynamo.get_steps(yesterday)
+
+    # Successfully loaded from db
+    if data:
+        return data
+
+    if not garmin:
         raise HTTPException(status_code=400, detail='Error logging in')
 
-    yesterday = date.today() - timedelta(1)
-    data = api.get_steps(yesterday.isoformat())
+    data = garmin.get_steps(yesterday)
 
     if not data:
         raise HTTPException(status_code=400, detail='Error logging in')
@@ -48,36 +68,59 @@ async def steps():
     if 'error' in data:
         raise HTTPException(status_code=500, detail=data.get('message'))
 
+    # Update in db
+    dynamo.update_steps(yesterday, data)
+
     return data
+
 
 @app.get('/stats', response_model=Stats)
 async def stats():
-    if not api:
+    yesterday = (date.today() - timedelta(1)).isoformat()
+    data = dynamo.get_stats(yesterday)
+
+    # Successfully loaded from db
+    if data:
+        return data
+
+    if not garmin:
         raise HTTPException(status_code=400, detail='Error logging in')
 
-    yesterday = date.today() - timedelta(1)
-    data = api.get_stats(yesterday.isoformat())
+    data = garmin.get_stats(yesterday)
 
     if not data:
         raise HTTPException(status_code=400, detail='Error logging in')
 
     if 'error' in data:
         raise HTTPException(status_code=500, detail=data.get('message'))
+
+    # Update in db
+    dynamo.update_stats(yesterday, data)
 
     return data
 
+
 @app.get('/heart_rate', response_model=HeartRate)
 async def heart_rate():
-    if not api:
+    yesterday = (date.today() - timedelta(1)).isoformat()
+    data = dynamo.get_heart_rate(yesterday)
+
+    # Successfully loaded from db
+    if data:
+        return data
+
+    if not garmin:
         raise HTTPException(status_code=400, detail='Error logging in')
 
-    yesterday = date.today() - timedelta(1)
-    data = api.get_heart_rate(yesterday.isoformat())
+    data = garmin.get_heart_rate(yesterday)
 
     if not data:
         raise HTTPException(status_code=400, detail='Error logging in')
 
     if 'error' in data:
         raise HTTPException(status_code=500, detail=data.get('message'))
+
+    # Update in db
+    dynamo.update_heart_rate(yesterday, data)
 
     return data

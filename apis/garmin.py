@@ -5,28 +5,17 @@ from garminconnect import (
     GarminConnectAuthenticationError,
 )
 
+
 class GarminApi:
     def __init__(self, email, password):
         self.email = email
         self.password = password
-        self.client = self.get_client()
-
-    def get_client(self):
-        try:
-            client = Garmin(self.email, self.password)
-            client.login()
-            return client
-        except (
-            GarminConnectConnectionError,
-            GarminConnectAuthenticationError,
-            GarminConnectTooManyRequestsError
-        ):
-            return None
+        self.client = None
 
     def get_steps(self, date):
         if not self.client:
-            return None
-        
+            self.client = self._get_client()
+
         try:
             return self.client.get_steps_data(date)
         except (
@@ -41,8 +30,8 @@ class GarminApi:
 
     def get_name(self):
         if not self.client:
-            return None
-        
+            self.client = self._get_client()
+
         try:
             return self.client.get_full_name()
         except (
@@ -57,8 +46,8 @@ class GarminApi:
 
     def get_stats(self, date):
         if not self.client:
-            return None
-        
+            self.client = self._get_client()
+
         try:
             return self.client.get_stats(date)
         except (
@@ -73,8 +62,8 @@ class GarminApi:
 
     def get_heart_rate(self, date):
         if not self.client:
-            return None
-        
+            self.client = self._get_client()
+
         try:
             return self.client.get_heart_rates(date)
         except (
@@ -86,3 +75,15 @@ class GarminApi:
                 'error': True,
                 'msg': f'GarminConnect error: {e.status}'
             }
+
+    def _get_client(self):
+        try:
+            client = Garmin(self.email, self.password)
+            client.login()
+            return client
+        except (
+            GarminConnectConnectionError,
+            GarminConnectAuthenticationError,
+            GarminConnectTooManyRequestsError
+        ):
+            return None

@@ -124,4 +124,4 @@ class HeartRate(BaseModel):
     restingHeartRate: int
     lastSevenDaysAvgRestingHeartRate: int
     heartRateValueDescriptors: List[HeartRateDescriptor]
-    heartRateValues: List[List[int]]
+    heartRateValues: List[List[Optional[int]]]
