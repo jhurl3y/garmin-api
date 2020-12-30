@@ -37,6 +37,13 @@ class DynamoApi:
 
         return data['Items'][0]['heart']
 
+    def get_activities(self, activity_id):
+        data = self._query_table('Activity', 'Id', activity_id, reverse=True)
+        if not data['Items']:
+            return None
+
+        return data['Items']
+
     def update_name(self, name):
         return self._update_table('Name', {
             'Id': 1,
@@ -64,12 +71,20 @@ class DynamoApi:
             'heart': ddb_heart
         })
 
+    def update_activities(self, activity_id, activity):
+        ddb_activity = json.loads(json.dumps(activity), parse_float=Decimal)
+        return self._update_table('Activity', {
+            'Id': activity_id,
+            'activity': ddb_activity
+        })
+
     # Helper methods
 
-    def _query_table(self, table_name, key_name, key_val):
+    def _query_table(self, table_name, key_name, key_val, reverse=False):
         table = self.dynamodb.Table(table_name)
         return table.query(
-            KeyConditionExpression=Key(key_name).eq(key_val)
+            KeyConditionExpression=Key(key_name).eq(key_val),
+            ScanIndexForward=(not reverse)
         )
 
     def _update_table(self, table_name, data):

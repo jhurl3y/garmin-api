@@ -4,6 +4,7 @@ from apis.dynamo import DynamoApi
 from apis.garmin import GarminApi
 from datetime import date, timedelta
 from dotenv import load_dotenv
+from helpers import generate_id
 from typing import List
 from models import (Root, Name, Step, Stats, HeartRate, Activity)
 
@@ -128,6 +129,13 @@ async def heart_rate():
 
 @app.get('/last_activity', response_model=Activity)
 async def last_activity():
+    activity_id = generate_id()
+    db_data = dynamo.get_activities(activity_id)
+
+    # Successfully loaded from db
+    if db_data:
+        return db_data[0]['activity']
+
     data = garmin.get_activities(limit=1)
 
     if not data:
@@ -136,4 +144,9 @@ async def last_activity():
     if 'error' in data:
         raise HTTPException(status_code=500, detail=data.get('message'))
 
-    return data[0]
+    activity = data[0]
+
+    # Update in db
+    dynamo.update_activities(activity_id, activity)
+
+    return activity
