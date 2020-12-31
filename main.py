@@ -51,8 +51,9 @@ async def name():
 
 @app.get('/steps', response_model=List[Step])
 async def steps():
-    yesterday = (date.today() - timedelta(1)).isoformat()
-    data = dynamo.get_steps(yesterday)
+    yesterday = (date.today() - timedelta(1))
+    steps_id = generate_id(yesterday)
+    data = dynamo.get_steps(steps_id)
 
     # Successfully loaded from db
     if data:
@@ -61,7 +62,7 @@ async def steps():
     if not garmin:
         raise HTTPException(status_code=400, detail='Error logging in')
 
-    data = garmin.get_steps(yesterday)
+    data = garmin.get_steps(yesterday.isoformat())
 
     if not data:
         raise HTTPException(status_code=400, detail='Error logging in')
@@ -70,15 +71,16 @@ async def steps():
         raise HTTPException(status_code=500, detail=data.get('message'))
 
     # Update in db
-    dynamo.update_steps(yesterday, data)
+    dynamo.update_steps(steps_id, data)
 
     return data
 
 
 @app.get('/stats', response_model=Stats)
 async def stats():
-    yesterday = (date.today() - timedelta(1)).isoformat()
-    data = dynamo.get_stats(yesterday)
+    yesterday = (date.today() - timedelta(1))
+    stats_id = generate_id(yesterday)
+    data = dynamo.get_stats(stats_id)
 
     # Successfully loaded from db
     if data:
@@ -87,7 +89,7 @@ async def stats():
     if not garmin:
         raise HTTPException(status_code=400, detail='Error logging in')
 
-    data = garmin.get_stats(yesterday)
+    data = garmin.get_stats(yesterday.isoformat())
 
     if not data:
         raise HTTPException(status_code=400, detail='Error logging in')
@@ -96,15 +98,16 @@ async def stats():
         raise HTTPException(status_code=500, detail=data.get('message'))
 
     # Update in db
-    dynamo.update_stats(yesterday, data)
+    dynamo.update_stats(stats_id, data)
 
     return data
 
 
 @app.get('/heart_rate', response_model=HeartRate)
 async def heart_rate():
-    yesterday = (date.today() - timedelta(1)).isoformat()
-    data = dynamo.get_heart_rate(yesterday)
+    yesterday = (date.today() - timedelta(1))
+    heart_rate_id = generate_id(yesterday)
+    data = dynamo.get_heart_rate(heart_rate_id)
 
     # Successfully loaded from db
     if data:
@@ -113,7 +116,7 @@ async def heart_rate():
     if not garmin:
         raise HTTPException(status_code=400, detail='Error logging in')
 
-    data = garmin.get_heart_rate(yesterday)
+    data = garmin.get_heart_rate(yesterday.isoformat())
 
     if not data:
         raise HTTPException(status_code=400, detail='Error logging in')
@@ -122,14 +125,14 @@ async def heart_rate():
         raise HTTPException(status_code=500, detail=data.get('message'))
 
     # Update in db
-    dynamo.update_heart_rate(yesterday, data)
+    dynamo.update_heart_rate(heart_rate_id, data)
 
     return data
 
 
 @app.get('/last_activity', response_model=Activity)
 async def last_activity():
-    activity_id = generate_id()
+    activity_id = generate_id(date.today())
     db_data = dynamo.get_activities(activity_id)
 
     # Successfully loaded from db

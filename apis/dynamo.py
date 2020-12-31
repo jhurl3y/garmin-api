@@ -16,22 +16,22 @@ class DynamoApi:
 
         return data['Items'][0]['name']
 
-    def get_steps(self, date):
-        data = self._query_table('Steps', 'date', date)
+    def get_steps(self, steps_id):
+        data = self._query_table('Steps', 'Id', steps_id)
         if not data['Items']:
             return None
 
         return data['Items'][0]['steps']
 
-    def get_stats(self, date):
-        data = self._query_table('Stats', 'date', date)
+    def get_stats(self, stats_id):
+        data = self._query_table('Stats', 'Id', stats_id)
         if not data['Items']:
             return None
 
         return data['Items'][0]['stats']
 
-    def get_heart_rate(self, date):
-        data = self._query_table('HeartRate', 'date', date)
+    def get_heart_rate(self, heart_rate_id):
+        data = self._query_table('HeartRate', 'Id', heart_rate_id)
         if not data['Items']:
             return None
 
@@ -50,24 +50,24 @@ class DynamoApi:
             'name': name
         })
 
-    def update_steps(self, date, steps):
+    def update_steps(self, steps_id, steps):
         ddb_steps = json.loads(json.dumps(steps), parse_float=Decimal)
         return self._update_table('Steps', {
-            'date': date,
+            'Id': steps_id,
             'steps': ddb_steps
         })
 
-    def update_stats(self, date, stats):
+    def update_stats(self, stats_id, stats):
         ddb_stats = json.loads(json.dumps(stats), parse_float=Decimal)
         return self._update_table('Stats', {
-            'date': date,
+            'Id': stats_id,
             'stats': ddb_stats
         })
 
-    def update_heart_rate(self, date, heart):
+    def update_heart_rate(self, heart_rate_id, heart):
         ddb_heart = json.loads(json.dumps(heart), parse_float=Decimal)
         return self._update_table('HeartRate', {
-            'date': date,
+            'Id': heart_rate_id,
             'heart': ddb_heart
         })
 

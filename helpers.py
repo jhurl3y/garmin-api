@@ -1,6 +1,5 @@
 from datetime import date, timedelta
 
 
-def generate_id():
-    yesterday = (date.today())
-    return int(f'{yesterday.year}{yesterday.month}{yesterday.day}')
+def generate_id(date):
+    return int(f'{date.year}{date.month}{date.day}')
