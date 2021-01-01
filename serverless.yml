@@ -31,8 +31,12 @@ functions:
   app:
     handler: main.handler
     events:
-      - http: ANY /
-      - http: ANY /{proxy+}
+      - http:
+          path: /
+          method: ANY
+      - http:
+          path: /{proxy+}
+          method: ANY
 
 custom:
   pythonRequirements:

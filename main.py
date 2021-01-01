@@ -14,7 +14,6 @@ load_dotenv()
 EMAIL = os.getenv("EMAIL")
 PASSWORD = os.getenv("PASSWORD")
 
-
 app = FastAPI()
 dynamo = DynamoApi()
 garmin = GarminApi(email=EMAIL, password=PASSWORD)
