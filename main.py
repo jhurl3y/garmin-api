@@ -1,5 +1,6 @@
 import os
 from fastapi import FastAPI, HTTPException
+from mangum import Mangum
 from apis.dynamo import DynamoApi
 from apis.garmin import GarminApi
 from datetime import date, timedelta
@@ -153,3 +154,5 @@ async def last_activity():
     dynamo.update_activities(activity_id, activity)
 
     return activity
+
+handler = Mangum(app)

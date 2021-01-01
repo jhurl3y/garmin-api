@@ -4,3 +4,4 @@ garminconnect
 python-dotenv
 boto3
 awscli
+mangum
