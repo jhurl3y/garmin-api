@@ -5,8 +5,8 @@ FastAPI wrapper around [garminconnect](https://github.com/cyberjunky/python-garm
 1. Create `.env` file in project root like so:
 
 ```
-EMAIL='email@gmail.com' # garmin email
-PASSWORD='passpass' # garmin password
+SECRET_NAME=secret_example
+SECRET_ARN=secret_example-arn
 REGION=eu-west-1
 STAGE=dev
 NAME_TABLE=Name

@@ -26,6 +26,11 @@ provider:
         - "arn:aws:dynamodb:${self:provider.region}:*:table/${env:STATS_TABLE}"
         - "arn:aws:dynamodb:${self:provider.region}:*:table/${env:HEART_TABLE}"
         - "arn:aws:dynamodb:${self:provider.region}:*:table/${env:STEPS_TABLE}"
+    - Effect: Allow
+      Action:
+        - secretsmanager:GetSecretValue
+      Resource:
+        - "arn:aws:secretsmanager:${self:provider.region}:*:secret:${env:SECRET_ARN}"
 
 functions:
   app:
