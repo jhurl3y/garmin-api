@@ -3,6 +3,7 @@ import base64
 import boto3
 import os
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
 from apis.dynamo import DynamoApi
 from apis.garmin import GarminApi
@@ -19,6 +20,17 @@ SECRET_NAME = os.getenv("SECRET_NAME")
 REGION = os.getenv("REGION")
 
 app = FastAPI()
+
+
+# CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # apis
 dynamo = DynamoApi()
