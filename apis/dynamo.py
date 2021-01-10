@@ -42,7 +42,42 @@ class DynamoApi:
         if not data['Items']:
             return None
 
-        return data['Items']
+        return data['Items'][0]
+
+    def get_activity_splits(self, activity_id):
+        data = self._query_table('ActivitySplits', 'Id', activity_id)
+        if not data['Items']:
+            return None
+
+        return data['Items'][0]['activity']
+
+    def get_activity_details(self, activity_id):
+        data = self._query_table('ActivityDetails', 'Id', activity_id)
+        if not data['Items']:
+            return None
+
+        return data['Items'][0]['activity']
+
+    def get_activity_weather(self, activity_id):
+        data = self._query_table('ActivityWeather', 'Id', activity_id)
+        if not data['Items']:
+            return None
+
+        return data['Items'][0]['activity']
+
+    def get_activity_hr_zones(self, activity_id):
+        data = self._query_table('ActivityHeartRateZones', 'Id', activity_id)
+        if not data['Items']:
+            return None
+
+        return data['Items'][0]['activity']
+
+    def get_device_last_used(self, device_id):
+        data = self._query_table('DeviceLastUsed', 'Id', device_id)
+        if not data['Items']:
+            return None
+
+        return data['Items'][0]['device']
 
     def update_name(self, name):
         return self._update_table('Name', {
@@ -76,6 +111,41 @@ class DynamoApi:
         return self._update_table('Activity', {
             'Id': activity_id,
             'activity': ddb_activity
+        })
+
+    def update_activity_splits(self, activity_id, splits):
+        ddb_activity = json.loads(json.dumps(splits), parse_float=Decimal)
+        return self._update_table('ActivitySplits', {
+            'Id': activity_id,
+            'activity': ddb_activity
+        })
+
+    def update_activity_details(self, activity_id, details):
+        ddb_activity = json.loads(json.dumps(details), parse_float=Decimal)
+        return self._update_table('ActivityDetails', {
+            'Id': activity_id,
+            'activity': ddb_activity
+        })
+
+    def update_activity_weather(self, activity_id, weather):
+        ddb_activity = json.loads(json.dumps(weather), parse_float=Decimal)
+        return self._update_table('ActivityWeather', {
+            'Id': activity_id,
+            'activity': ddb_activity
+        })
+
+    def update_activity_hr_zones(self, activity_id, hr_zones):
+        ddb_activity = json.loads(json.dumps(hr_zones), parse_float=Decimal)
+        return self._update_table('ActivityHeartRateZones', {
+            'Id': activity_id,
+            'activity': ddb_activity
+        })
+
+    def update_device_last_used(self, device_id, device):
+        ddb_device = json.loads(json.dumps(device), parse_float=Decimal)
+        return self._update_table('DeviceLastUsed', {
+            'Id': device_id,
+            'device': ddb_device
         })
 
     # Helper methods
