@@ -26,6 +26,11 @@ provider:
         - "arn:aws:dynamodb:${self:provider.region}:*:table/${env:STATS_TABLE}"
         - "arn:aws:dynamodb:${self:provider.region}:*:table/${env:HEART_TABLE}"
         - "arn:aws:dynamodb:${self:provider.region}:*:table/${env:STEPS_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${env:ACTIVITY_SPLITS_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${env:ACTIVITY_DETAILS_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${env:ACTIVITY_WEATHER_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${env:ACTIVITY_HEART_RATE_ZONES_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${env:DEVICE_LAST_USED_TABLE}"
     - Effect: Allow
       Action:
         - secretsmanager:GetSecretValue
