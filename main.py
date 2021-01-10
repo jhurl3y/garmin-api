@@ -4,6 +4,7 @@ import boto3
 import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from typing import Optional
 from mangum import Mangum
 from apis.dynamo import DynamoApi
 from apis.garmin import GarminApi
@@ -13,7 +14,7 @@ from dotenv import load_dotenv
 from helpers import generate_id
 from typing import List
 from models import (Root, Name, Step, Stats, HeartRate,
-                    Activity, Device, Weather, HRZone, Split, Details)
+                    Activity, Device, Weather, HRZone, Split, Details, FullActivity)
 
 # Load email and password
 load_dotenv()
@@ -126,95 +127,6 @@ async def heart_rate():
     return data
 
 
-@app.get('/last_activity', response_model=Activity)
-async def last_activity():
-    return _get_last_activity()
-
-
-@app.get('/last_activity_splits', response_model=Split)
-async def last_activity_splits():
-    activity = _get_last_activity()
-    activity_id = int(activity['activityId'])
-    db_data = dynamo.get_activity_splits(activity_id)
-
-    # Successfully loaded from db
-    if db_data:
-        return db_data
-
-    data = garmin.get_activity_splits(activity_id)
-
-    if 'error' in data:
-        raise HTTPException(status_code=500, detail=data.get('msg'))
-
-    # Update in db
-    dynamo.update_activity_splits(activity_id, data)
-
-    return data
-
-
-@app.get('/last_activity_details', response_model=Details)
-async def last_activity_details():
-    activity = _get_last_activity()
-    activity_id = int(activity['activityId'])
-    db_data = dynamo.get_activity_details(activity_id)
-
-    # Successfully loaded from db
-    if db_data:
-        return db_data
-
-    data = garmin.get_activity_details(activity_id)
-
-    if 'error' in data:
-        raise HTTPException(status_code=500, detail=data.get('msg'))
-
-    # Update in db
-    dynamo.update_activity_details(activity_id, data)
-
-    return data
-
-
-@app.get('/last_activity_weather', response_model=Weather)
-async def last_activity_weather():
-    activity = _get_last_activity()
-    activity_id = int(activity['activityId'])
-    db_data = dynamo.get_activity_weather(activity_id)
-
-    # Successfully loaded from db
-    if db_data:
-        return db_data
-
-    data = garmin.get_activity_weather(activity_id)
-
-    if 'error' in data:
-        raise HTTPException(status_code=500, detail=data.get('msg'))
-
-    # Update in db
-    dynamo.update_activity_weather(activity_id, data)
-
-    return data
-
-
-@app.get('/last_activity_hr_zones', response_model=List[HRZone])
-async def last_activity_hr_zones():
-    activity = _get_last_activity()
-    activity_id = int(activity['activityId'])
-    db_data = dynamo.get_activity_hr_zones(activity_id)
-
-    # Successfully loaded from db
-    if db_data:
-        return db_data
-
-    data = garmin.get_activity_hr_zones(activity_id)
-
-    if 'error' in data:
-        raise HTTPException(status_code=500, detail=data.get('msg'))
-
-    # Update in db
-    dynamo.update_activity_hr_zones(activity_id, data)
-
-    return data
-
-
 @app.get('/last_device_used', response_model=Device)
 async def last_device_used():
     yesterday = (date.today() - timedelta(1))
@@ -232,6 +144,74 @@ async def last_device_used():
 
     # Update in db
     dynamo.update_device_last_used(device_id, data)
+
+    return data
+
+
+@app.get('/last_activity_summary', response_model=Activity)
+async def last_activity_summary():
+    return _get_last_activity()
+
+
+@app.get('/last_activity_splits', response_model=Split)
+async def last_activity_splits():
+    activity = _get_last_activity()
+    activity_id = int(activity['activityId'])
+    return _get_splits(activity_id)
+
+
+@app.get('/last_activity_details', response_model=Details)
+async def last_activity_details():
+    activity = _get_last_activity()
+    activity_id = int(activity['activityId'])
+    return _get_details(activity_id)
+
+
+@app.get('/last_activity_weather', response_model=Weather)
+async def last_activity_weather():
+    activity = _get_last_activity()
+    activity_id = int(activity['activityId'])
+    return _get_weather(activity_id)
+
+
+@app.get('/last_activity_hr_zones', response_model=List[HRZone])
+async def last_activity_hr_zones():
+    activity = _get_last_activity()
+    activity_id = int(activity['activityId'])
+    return _get_hr_zones(activity_id)
+
+
+@app.get('/last_activity', response_model=FullActivity)
+async def last_activity(
+    include_splits: Optional[bool] = False,
+    include_details: Optional[bool] = False,
+    include_weather: Optional[bool] = False,
+    include_hr_zones: Optional[bool] = False,
+):
+    data = {
+        'summary': None,
+        'splits': None,
+        'details': None,
+        'weather': None,
+        'hr_zones': None,
+    }
+    activity = _get_last_activity()
+    activity_id = int(activity['activityId'])
+
+    # Build the data to return
+    data['summary'] = activity
+
+    if include_splits:
+        data['splits'] = _get_splits(activity_id)
+
+    if include_details:
+        data['details'] = _get_details(activity_id)
+
+    if include_weather:
+        data['weather'] = _get_weather(activity_id)
+
+    if include_hr_zones:
+        data['hr_zones'] = _get_hr_zones(activity_id)
 
     return data
 
@@ -255,6 +235,78 @@ def _get_last_activity():
     dynamo.update_activities(activity_id, activity)
 
     return activity
+
+
+def _get_splits(activity_id):
+    db_data = dynamo.get_activity_splits(activity_id)
+
+    # Successfully loaded from db
+    if db_data:
+        return db_data
+
+    data = garmin.get_activity_splits(activity_id)
+
+    if 'error' in data:
+        raise HTTPException(status_code=500, detail=data.get('msg'))
+
+    # Update in db
+    dynamo.update_activity_splits(activity_id, data)
+
+    return data
+
+
+def _get_details(activity_id):
+    db_data = dynamo.get_activity_details(activity_id)
+
+    # Successfully loaded from db
+    if db_data:
+        return db_data
+
+    data = garmin.get_activity_details(activity_id)
+
+    if 'error' in data:
+        raise HTTPException(status_code=500, detail=data.get('msg'))
+
+    # Update in db
+    dynamo.update_activity_details(activity_id, data)
+
+    return data
+
+
+def _get_weather(activity_id):
+    db_data = dynamo.get_activity_weather(activity_id)
+
+    # Successfully loaded from db
+    if db_data:
+        return db_data
+
+    data = garmin.get_activity_weather(activity_id)
+
+    if 'error' in data:
+        raise HTTPException(status_code=500, detail=data.get('msg'))
+
+    # Update in db
+    dynamo.update_activity_weather(activity_id, data)
+
+    return data
+
+
+def _get_hr_zones(activity_id):
+    db_data = dynamo.get_activity_hr_zones(activity_id)
+
+    # Successfully loaded from db
+    if db_data:
+        return db_data
+
+    data = garmin.get_activity_hr_zones(activity_id)
+
+    if 'error' in data:
+        raise HTTPException(status_code=500, detail=data.get('msg'))
+
+    # Update in db
+    dynamo.update_activity_hr_zones(activity_id, data)
+
+    return data
 
 
 handler = Mangum(app)

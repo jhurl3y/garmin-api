@@ -425,3 +425,11 @@ class Details(BaseModel):
     geoPolylineDTO: GeoPolylineDTO
     activityDetailMetrics: List[ActivityDetailMetric]
     heartRateDTOs: Optional[List[float]] = None
+
+
+class FullActivity(BaseModel):
+    summary: Activity
+    splits: Optional[Split] = None
+    details: Optional[Details] = None
+    weather: Optional[Weather] = None
+    hr_zones: Optional[List[HRZone]] = None
