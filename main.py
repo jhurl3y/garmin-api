@@ -12,7 +12,8 @@ from datetime import date, timedelta
 from dotenv import load_dotenv
 from helpers import generate_id
 from typing import List
-from models import (Root, Name, Step, Stats, HeartRate, Activity)
+from models import (Root, Name, Step, Stats, HeartRate,
+                    Activity, Device, Weather, HRZone, Split, Details)
 
 # Load email and password
 load_dotenv()
@@ -130,7 +131,7 @@ async def last_activity():
     return _get_last_activity()
 
 
-@app.get('/last_activity_splits')
+@app.get('/last_activity_splits', response_model=Split)
 async def last_activity_splits():
     activity = _get_last_activity()
     activity_id = int(activity['activityId'])
@@ -151,7 +152,7 @@ async def last_activity_splits():
     return data
 
 
-@app.get('/last_activity_details')
+@app.get('/last_activity_details', response_model=Details)
 async def last_activity_details():
     activity = _get_last_activity()
     activity_id = int(activity['activityId'])
@@ -172,7 +173,7 @@ async def last_activity_details():
     return data
 
 
-@app.get('/last_activity_weather')
+@app.get('/last_activity_weather', response_model=Weather)
 async def last_activity_weather():
     activity = _get_last_activity()
     activity_id = int(activity['activityId'])
@@ -193,7 +194,7 @@ async def last_activity_weather():
     return data
 
 
-@app.get('/last_activity_hr_zones')
+@app.get('/last_activity_hr_zones', response_model=List[HRZone])
 async def last_activity_hr_zones():
     activity = _get_last_activity()
     activity_id = int(activity['activityId'])
@@ -214,7 +215,7 @@ async def last_activity_hr_zones():
     return data
 
 
-@app.get('/last_device_used')
+@app.get('/last_device_used', response_model=Device)
 async def last_device_used():
     yesterday = (date.today() - timedelta(1))
     device_id = generate_id(yesterday)

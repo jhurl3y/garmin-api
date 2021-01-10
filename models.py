@@ -304,3 +304,124 @@ class Activity(BaseModel):
     decoDive: Optional[bool] = None
     elevationCorrected: bool
     purposeful: bool
+
+
+class Device(BaseModel):
+    userDeviceId: int
+    userProfileNumber: int
+    applicationNumber: int
+    lastUsedDeviceApplicationKey: str
+    lastUsedDeviceName: str
+    lastUsedDeviceUploadTime: int
+    imageUrl: str
+    released: bool
+
+
+class Weather(BaseModel):
+    temp: int
+    weatherTypeDTO: dict
+    apparentTemp: int
+    windGust: Optional[int] = None
+    latitude: int
+    dewPoint: int
+    relativeHumidity: int
+    windDirection: int
+    issueDate: datetime
+    windSpeed: int
+    windDirectionCompassPoint: str
+    longitude: float
+    weatherStationDTO: dict
+
+
+class HRZone(BaseModel):
+    zoneNumber: int
+    secsInZone: int
+    zoneLowBoundary: int
+
+
+class EventDTO(BaseModel):
+    startTimeGMT: datetime
+    startTimeGMTDoubleValue: int
+    sectionTypeDTO: dict
+
+
+class LapDTO(BaseModel):
+    maxHR: int
+    distance: int
+    minElevation: float
+    elevationGain: int
+    averageRunCadence: float
+    maxVerticalSpeed: float
+    duration: float
+    lengthDTOs: List[float]
+    startLatitude: float
+    startTimeGMT: datetime
+    messageIndex: int
+    averageMovingSpeed: float
+    elevationLoss: int
+    maxRunCadence: int
+    lapIndex: int
+    movingDuration: int
+    averageSpeed: float
+    maxSpeed: float
+    calories: int
+    strideLength: float
+    endLatitude: float
+    endLongitude: float
+    averageHR: int
+    startLongitude: float
+    connectIQMeasurement: List[float]
+    maxElevation: float
+    elapsedDuration: int
+
+
+class Split(BaseModel):
+    activityId: int
+    eventDTOs: List[EventDTO]
+    lapDTOs: List[LapDTO]
+
+
+class MetricDescriptors(BaseModel):
+    key: str
+    unit: dict
+    metricsIndex: int
+
+
+class Polyline(BaseModel):
+    altitude: Optional[float] = None
+    timerStart: bool
+    distanceInMeters: Optional[float] = None
+    cumulativeDescent: Optional[float] = None
+    lon: Optional[float] = None
+    timerStop: bool
+    cumulativeAscent: Optional[float] = None
+    distanceFromPreviousPoint: Optional[float] = None
+    speed: Optional[int] = None
+    valid: bool
+    time: Optional[int] = None
+    extendedCoordinate: bool
+    lat: Optional[float] = None
+
+
+class GeoPolylineDTO(BaseModel):
+    endPoint: Polyline
+    minLon: float
+    maxLat: float
+    minLat: float
+    startPoint: Polyline
+    polyline: List[Polyline]
+
+
+class ActivityDetailMetric(BaseModel):
+    metrics: List[Optional[int]]
+
+
+class Details(BaseModel):
+    activityId: int
+    measurementCount: int
+    metricsCount: int
+    detailsAvailable: bool
+    metricDescriptors: List[MetricDescriptors]
+    geoPolylineDTO: GeoPolylineDTO
+    activityDetailMetrics: List[ActivityDetailMetric]
+    heartRateDTOs: Optional[List[float]] = None
