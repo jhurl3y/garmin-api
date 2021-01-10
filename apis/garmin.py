@@ -132,6 +132,126 @@ class GarminApi:
                 'msg': f'GarminConnect error: {e.status}'
             }
 
+    def get_activity_splits(self, activity_id):
+        # Log in to garmin
+        if not self.client:
+            try:
+                self.client = self._get_client()
+            except (SecretsError, GarminLoginError) as e:
+                return {
+                    'error': True,
+                    'msg': f'Login error: {str(e)}'
+                }
+
+        # Fetch splits
+        try:
+            return self.client.get_activity_splits(activity_id)
+        except (
+            GarminConnectConnectionError,
+            GarminConnectAuthenticationError,
+            GarminConnectTooManyRequestsError
+        ) as e:
+            return {
+                'error': True,
+                'msg': f'GarminConnect error: {e.status}'
+            }
+
+    def get_activity_details(self, activity_id):
+        # Log in to garmin
+        if not self.client:
+            try:
+                self.client = self._get_client()
+            except (SecretsError, GarminLoginError) as e:
+                return {
+                    'error': True,
+                    'msg': f'Login error: {str(e)}'
+                }
+
+        # Fetch details
+        try:
+            return self.client.get_activity_details(activity_id)
+        except (
+            GarminConnectConnectionError,
+            GarminConnectAuthenticationError,
+            GarminConnectTooManyRequestsError
+        ) as e:
+            return {
+                'error': True,
+                'msg': f'GarminConnect error: {e.status}'
+            }
+
+    def get_activity_weather(self, activity_id):
+        # Log in to garmin
+        if not self.client:
+            try:
+                self.client = self._get_client()
+            except (SecretsError, GarminLoginError) as e:
+                return {
+                    'error': True,
+                    'msg': f'Login error: {str(e)}'
+                }
+
+        # Fetch weather
+        try:
+            return self.client.get_activity_weather(activity_id)
+        except (
+            GarminConnectConnectionError,
+            GarminConnectAuthenticationError,
+            GarminConnectTooManyRequestsError
+        ) as e:
+            return {
+                'error': True,
+                'msg': f'GarminConnect error: {e.status}'
+            }
+
+    def get_activity_hr_zones(self, activity_id):
+        # Log in to garmin
+        if not self.client:
+            try:
+                self.client = self._get_client()
+            except (SecretsError, GarminLoginError) as e:
+                return {
+                    'error': True,
+                    'msg': f'Login error: {str(e)}'
+                }
+
+        # Fetch hr zones
+        try:
+            return self.client.get_activity_hr_in_timezones(activity_id)
+        except (
+            GarminConnectConnectionError,
+            GarminConnectAuthenticationError,
+            GarminConnectTooManyRequestsError
+        ) as e:
+            return {
+                'error': True,
+                'msg': f'GarminConnect error: {e.status}'
+            }
+
+    def get_device_last_used(self):
+        # Log in to garmin
+        if not self.client:
+            try:
+                self.client = self._get_client()
+            except (SecretsError, GarminLoginError) as e:
+                return {
+                    'error': True,
+                    'msg': f'Login error: {str(e)}'
+                }
+
+        # Fetch device
+        try:
+            return self.client.get_device_last_used()
+        except (
+            GarminConnectConnectionError,
+            GarminConnectAuthenticationError,
+            GarminConnectTooManyRequestsError
+        ) as e:
+            return {
+                'error': True,
+                'msg': f'GarminConnect error: {e.status}'
+            }
+
     def _get_client(self):
         credentials = self.secret_api.get_credentials()
         if not credentials:
