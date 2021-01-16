@@ -413,7 +413,7 @@ class GeoPolylineDTO(BaseModel):
 
 
 class ActivityDetailMetric(BaseModel):
-    metrics: List[Optional[int]]
+    metrics: List[Optional[float]]
 
 
 class Details(BaseModel):
