@@ -61,8 +61,8 @@ class Stats(BaseModel):
     userFloorsAscendedGoal: int
     minHeartRate: int
     maxHeartRate: int
-    restingHeartRate: int
-    lastSevenDaysAvgRestingHeartRate: int
+    restingHeartRate: Optional[int] = None
+    lastSevenDaysAvgRestingHeartRate: Optional[int] = None
     source: str
     averageStressLevel: int
     maxStressLevel: int
@@ -202,7 +202,7 @@ class Activity(BaseModel):
     maxFractionalCadence: Optional[int] = None
     trainingStressScore: Optional[int] = None
     intensityFactor: Optional[int] = None
-    vO2MaxValue: int
+    vO2MaxValue: Optional[int] = None
     avgVerticalRatio: Optional[int] = None
     avgGroundContactBalance: Optional[int] = None
     lactateThresholdBpm: Optional[int] = None

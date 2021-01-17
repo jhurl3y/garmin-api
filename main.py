@@ -224,12 +224,14 @@ def _get_last_activity():
     if db_data:
         return db_data['activity']
 
-    data = garmin.get_activities(limit=1)
+    data = garmin.get_activities(limit=10)
 
     if 'error' in data:
         raise HTTPException(status_code=500, detail=data.get('msg'))
 
-    activity = data[0]
+    # Only want to return running for time being
+    activity = next(
+        a for a in data if a['activityType']['typeKey'] == 'running')
 
     # Update in db
     dynamo.update_activities(activity_id, activity)
