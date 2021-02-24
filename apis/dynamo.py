@@ -3,6 +3,7 @@ import boto3
 from boto3.dynamodb.conditions import Key
 from datetime import datetime
 from decimal import Decimal
+from helpers import TIMESTAMP_FORMAT
 
 
 class DynamoApi:
@@ -168,5 +169,4 @@ class DynamoApi:
         return table.put_item(Item=data)
 
     def _get_timestamp():
-        now = datetime.now()
-        return now.strftime('%Y-%m-%d %H:%M:%S')
+        return datetime.now().strftime(TIMESTAMP_FORMAT)

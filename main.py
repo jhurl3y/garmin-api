@@ -71,7 +71,7 @@ async def steps():
     db_data = dynamo.get_steps(steps_id)
 
     # Successfully loaded from db
-    if db_data:
+    if db_data and not stale_data(db_data['timestamp']):
         return db_data
 
     data = garmin.get_steps(yesterday.isoformat())
@@ -92,7 +92,7 @@ async def stats():
     db_data = dynamo.get_stats(stats_id)
 
     # Successfully loaded from db
-    if db_data:
+    if db_data and not stale_data(db_data['timestamp']):
         return db_data
 
     data = garmin.get_stats(yesterday.isoformat())
@@ -113,7 +113,7 @@ async def heart_rate():
     db_data = dynamo.get_heart_rate(heart_rate_id)
 
     # Successfully loaded from db
-    if db_data:
+    if db_data and not stale_data(db_data['timestamp']):
         return db_data
 
     data = garmin.get_heart_rate(yesterday.isoformat())
@@ -134,7 +134,7 @@ async def last_device_used():
     db_data = dynamo.get_device_last_used(device_id)
 
     # Successfully loaded from db
-    if db_data:
+    if db_data and not stale_data(db_data['timestamp']):
         return db_data
 
     data = garmin.get_device_last_used()
@@ -221,7 +221,7 @@ def _get_last_activity():
     db_data = dynamo.get_activities(activity_id)
 
     # Successfully loaded from db
-    if db_data:
+    if db_data and not stale_data(db_data['timestamp']):
         return db_data['activity']
 
     data = garmin.get_activities(limit=10)
