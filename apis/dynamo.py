@@ -1,6 +1,7 @@
 import json
 import boto3
 from boto3.dynamodb.conditions import Key
+from datetime import datetime
 from decimal import Decimal
 
 
@@ -89,28 +90,32 @@ class DynamoApi:
         ddb_steps = json.loads(json.dumps(steps), parse_float=Decimal)
         return self._update_table('Steps', {
             'Id': steps_id,
-            'steps': ddb_steps
+            'steps': ddb_steps,
+            'timestamp': self._get_timestamp()
         })
 
     def update_stats(self, stats_id, stats):
         ddb_stats = json.loads(json.dumps(stats), parse_float=Decimal)
         return self._update_table('Stats', {
             'Id': stats_id,
-            'stats': ddb_stats
+            'stats': ddb_stats,
+            'timestamp': self._get_timestamp()
         })
 
     def update_heart_rate(self, heart_rate_id, heart):
         ddb_heart = json.loads(json.dumps(heart), parse_float=Decimal)
         return self._update_table('HeartRate', {
             'Id': heart_rate_id,
-            'heart': ddb_heart
+            'heart': ddb_heart,
+            'timestamp': self._get_timestamp()
         })
 
     def update_activities(self, activity_id, activity):
         ddb_activity = json.loads(json.dumps(activity), parse_float=Decimal)
         return self._update_table('Activity', {
             'Id': activity_id,
-            'activity': ddb_activity
+            'activity': ddb_activity,
+            'timestamp': self._get_timestamp()
         })
 
     def update_activity_splits(self, activity_id, splits):
@@ -145,7 +150,8 @@ class DynamoApi:
         ddb_device = json.loads(json.dumps(device), parse_float=Decimal)
         return self._update_table('DeviceLastUsed', {
             'Id': device_id,
-            'device': ddb_device
+            'device': ddb_device,
+            'timestamp': self._get_timestamp()
         })
 
     # Helper methods
@@ -160,3 +166,7 @@ class DynamoApi:
     def _update_table(self, table_name, data):
         table = self.dynamodb.Table(table_name)
         return table.put_item(Item=data)
+
+    def _get_timestamp():
+        now = datetime.now()
+        return now.strftime('%Y-%m-%d %H:%M:%S')
