@@ -76,7 +76,7 @@ async def steps():
 
     # Successfully loaded from db
     if db_data and not stale_data(db_data['timestamp']):
-        return db_data
+        return db_data['steps']
 
     data = garmin.get_steps(yesterday.isoformat())
 
@@ -97,7 +97,7 @@ async def stats():
 
     # Successfully loaded from db
     if db_data and not stale_data(db_data['timestamp']):
-        return db_data
+        return db_data['stats']
 
     data = garmin.get_stats(yesterday.isoformat())
 
@@ -118,7 +118,7 @@ async def heart_rate():
 
     # Successfully loaded from db
     if db_data and not stale_data(db_data['timestamp']):
-        return db_data
+        return db_data['heart']
 
     data = garmin.get_heart_rate(yesterday.isoformat())
 
@@ -139,7 +139,7 @@ async def last_device_used():
 
     # Successfully loaded from db
     if db_data and not stale_data(db_data['timestamp']):
-        return db_data
+        return db_data['device']
 
     data = garmin.get_device_last_used()
 

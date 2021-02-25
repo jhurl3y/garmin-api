@@ -23,21 +23,21 @@ class DynamoApi:
         if not data['Items']:
             return None
 
-        return data['Items'][0]['steps']
+        return data['Items'][0]
 
     def get_stats(self, stats_id):
         data = self._query_table('Stats', 'Id', stats_id)
         if not data['Items']:
             return None
 
-        return data['Items'][0]['stats']
+        return data['Items'][0]
 
     def get_heart_rate(self, heart_rate_id):
         data = self._query_table('HeartRate', 'Id', heart_rate_id)
         if not data['Items']:
             return None
 
-        return data['Items'][0]['heart']
+        return data['Items'][0]
 
     def get_activities(self, activity_id):
         data = self._query_table('Activity', 'Id', activity_id, reverse=True)
@@ -79,7 +79,7 @@ class DynamoApi:
         if not data['Items']:
             return None
 
-        return data['Items'][0]['device']
+        return data['Items'][0]
 
     def update_name(self, name):
         return self._update_table('Name', {
