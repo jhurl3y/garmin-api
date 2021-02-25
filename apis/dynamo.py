@@ -168,5 +168,5 @@ class DynamoApi:
         table = self.dynamodb.Table(table_name)
         return table.put_item(Item=data)
 
-    def _get_timestamp():
+    def _get_timestamp(self):
         return datetime.now().strftime(TIMESTAMP_FORMAT)

@@ -1,3 +1,4 @@
+import logging
 from botocore.exceptions import ClientError
 import base64
 import boto3
@@ -22,6 +23,9 @@ SECRET_NAME = os.getenv("SECRET_NAME")
 REGION = os.getenv("REGION")
 
 app = FastAPI()
+
+# Enable debug logging
+logging.basicConfig(level=logging.DEBUG)
 
 
 # CORS
