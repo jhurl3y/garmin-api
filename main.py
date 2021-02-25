@@ -12,7 +12,7 @@ from apis.garmin import GarminApi
 from apis.secret import SecretApi
 from datetime import date, timedelta
 from dotenv import load_dotenv
-from helpers import generate_id
+from helpers import generate_id, stale_data
 from typing import List
 from models import (Root, Name, Step, Stats, HeartRate,
                     Activity, Device, Weather, HRZone, Split, Details, FullActivity)
