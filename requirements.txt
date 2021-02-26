@@ -1,6 +1,6 @@
 uvicorn
 fastapi
-garminconnect
+garminconnect>=0.1.19
 python-dotenv
 boto3
 awscli
