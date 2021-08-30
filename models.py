@@ -139,7 +139,7 @@ class Activity(BaseModel):
     distance: float
     duration: float
     elapsedDuration: float
-    movingDuration: float
+    movingDuration: float = None
     elevationGain: int
     elevationLoss: int
     averageSpeed: float
