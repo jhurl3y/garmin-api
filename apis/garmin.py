@@ -256,7 +256,6 @@ class GarminApi:
         credentials = self.secret_api.get_credentials()
         if not credentials:
             raise SecretsError('Error fetching garmin login credentials')
-
         try:
             client = Garmin(credentials["EMAIL"], credentials["PASSWORD"])
             client.login()

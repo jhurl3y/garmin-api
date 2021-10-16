@@ -55,7 +55,7 @@ async def name():
 
     # Successfully loaded from db
     if db_data:
-        return {'name': dadb_datata}
+        return {'name': db_data}
 
     data = garmin.get_name()
 
